@@ -1,7 +1,7 @@
 <template>
 	<section class="produtos-container">
 		<div v-if="produtos && produtos.length" class="produtos">
-			<div v-for="produto in produtos" :key="produto.id" class="produto">
+			<div v-for="(produto, index) in produtos" :key="index" class="produto">
 				<router-link to="/">
 					<img v-if="produto.foto" :src="produto.fotos[0].src" :alt="produto.fotos[0].titulo" />
 					<h2 class="titulo">{{ produto.nome }}</h2>
@@ -9,6 +9,7 @@
 					<p>{{ produto.descricao }}</p>
 				</router-link>
 			</div>
+			<ProdutosPaginar :produtosTotal="produtosTotal" :produtosPorPagina="produtosPorPagina"></ProdutosPaginar>
 		</div>
 		<div v-else-if="produtos && produtos.length === 0">
 			<p class="sem-resultados">Busca sem resultados. Tente buscar outro termo.</p>
@@ -19,12 +20,18 @@
 <script>
 	import { api } from "@/services.js";
 	import { serialize } from "@/helpers.js";
+	import ProdutosPaginar from "@/components/ProdutosPaginar.vue";
 
 	export default {
+		name: "ProdutosLista",
+		components: {
+			ProdutosPaginar,
+		},
 		data() {
 			return {
 				produtos: null,
-				produtosPorPagina: 10,
+				produtosPorPagina: 9,
+				produtosTotal: 0,
 			};
 		},
 		computed: {
@@ -37,6 +44,7 @@
 		methods: {
 			getProdutos() {
 				api.get(this.url).then((response) => {
+					this.produtosTotal = Number(response.headers["x-total-count"]);
 					this.produtos = response.data;
 				});
 			},
