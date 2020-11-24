@@ -1,6 +1,6 @@
 <template>
   <section class="login">
-    <h1>Login teste</h1>
+    <h1>Login</h1>
     <form>
       <label for="email">E-mail</label>
       <input type="email" name="email" id="email" v-model="login.email" />
